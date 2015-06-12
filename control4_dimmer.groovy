@@ -28,13 +28,13 @@ metadata {
             state "on", label: '${name}', action: "switch.off", icon: "st.switches.light.on", backgroundColor: "#79b821"
             state "off", label: '${name}', action: "switch.on", icon: "st.switches.light.off", backgroundColor: "#ffffff"
         }
-        standardTile("refresh", "device.switch", inactiveLabel: false, decoration: "flat") {
+        standardTile("refresh", "device.switch", decoration: "flat") {
             state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
-        controlTile("levelControl", "device.level", "slider", height: 1, width: 3, inactiveLabel: false, range:"(0..100)") {
+        controlTile("levelControl", "device.level", "slider", height: 1, width: 3, range:"(0..100)") {
             state "level", action:"switch level.setLevel"
         }
-        valueTile("levelValue", "device.level", inactiveLabel: false, decoration: "flat") {
+        valueTile("levelValue", "device.level", decoration: "flat") {
             state "level", label:'${currentValue} %', unit:"%", backgroundColor:"#ffffff"
         }
 
