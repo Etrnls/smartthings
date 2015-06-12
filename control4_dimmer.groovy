@@ -24,12 +24,12 @@ metadata {
     }
 
     tiles {
-        standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
+        standardTile("switch", "device.switch", width: 2, height: 2) {
             state "on", label: '${name}', action: "switch.off", icon: "st.switches.light.on", backgroundColor: "#79b821"
             state "off", label: '${name}', action: "switch.on", icon: "st.switches.light.off", backgroundColor: "#ffffff"
         }
         standardTile("refresh", "device.switch", inactiveLabel: false, decoration: "flat") {
-            state "default", label:"", action: "refresh.refresh", icon: "st.secondary.refresh"
+            state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
         controlTile("levelControl", "device.level", "slider", height: 1, width: 3, inactiveLabel: false, range:"(0..100)") {
             state "level", action:"switch level.setLevel"
@@ -48,19 +48,19 @@ def parse(String description) {
     if (description?.startsWith("catchall:")) {
         def msg = zigbee.parse(description)
         def data = msg.clusterId == 0x0001 ? new String(msg.data as byte[]) : ""
-        if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 1])
-            || data.contains("sa c4.dmx.cc 01 01")) {
+        if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 1]) ||
+            data.contains("sa c4.dmx.cc 01 01")) {
             log.debug "parse switch on"
             evt = createEvent(name: "switch", value: "on")
-        } else if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 0])
-                || data.contains("sa c4.dmx.cc 05 01")) {
+        } else if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 0]) ||
+                   data.contains("sa c4.dmx.cc 05 01")) {
             log.debug "parse switch off"
             evt = createEvent(name: "switch", value: "off")
-        } else if (data.contains("sa c4.dmx.bp")
-                || data.contains("sa c4.dmx.sc")
-                || data.contains("sa c4.dmx.cc")
-                || data.contains("sa c4.dmx.hc")
-                || data.contains("sa c4.dmx.he")) {
+        } else if (data.contains("sa c4.dmx.bp") ||
+                   data.contains("sa c4.dmx.sc") ||
+                   data.contains("sa c4.dmx.cc") ||
+                   data.contains("sa c4.dmx.hc") ||
+                   data.contains("sa c4.dmx.he")) {
             // bp - button down
             // sc - button up
             // cc - button click
@@ -83,12 +83,12 @@ def parse(String description) {
         }
     } else if (description?.startsWith("read attr -")) {
         def descMap = parseDescriptionAsMap(description)
-        if(descMap.cluster == "0008" && descMap.attrId == "0000"){
-            def level = Integer.parseInt(descMap.value, 16) * 100 / 255 as Integer
+        if (descMap.cluster == "0008" && descMap.attrId == "0000") {
+            def level = Math.round(Integer.parseInt(descMap.value, 16) * 100 / 255)
             log.debug "parse attr level ${level}"
             evt = createEvent(name: "level", value: level)
         } else {
-            log.warn "parse(read descMap = '${descMap}') not handled"
+            log.warn "parse(read attr descMap = '${descMap}') not handled"
         }
     } else {
         log.warn "parse(description = '${description}') not handled"
@@ -120,16 +120,13 @@ def setLevel(value) {
     def cmds = []
 
     if (value == 0) {
-        sendEvent(name: "switch", value: "off")
         cmds << off()
-    }
-    else if (device.latestValue("switch") == "off") {
-        sendEvent(name: "switch", value: "on")
+    } else if (device.latestValue("switch") == "off") {
         cmds << on()
     }
 
     sendEvent(name: "level", value: value)
-    def level = String.format("%02x", Math.round(value * 255 / 100).toInteger());
+    def level = String.format("%02x", Math.round(value * 255 / 100));
     cmds << "st cmd 0x${device.deviceNetworkId} 1 8 4 {${level} 0000}"
 
     cmds
