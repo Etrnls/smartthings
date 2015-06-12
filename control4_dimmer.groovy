@@ -31,11 +31,11 @@ metadata {
         standardTile("refresh", "device.switch", decoration: "flat") {
             state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
-        controlTile("levelControl", "device.level", "slider", height: 1, width: 3, range:"(0..100)") {
-            state "level", action:"switch level.setLevel"
+        controlTile("levelControl", "device.level", "slider", height: 1, width: 3, range: "(0..100)") {
+            state "level", action: "switch level.setLevel"
         }
         valueTile("levelValue", "device.level", decoration: "flat") {
-            state "level", label:'${currentValue} %', unit:"%", backgroundColor:"#ffffff"
+            state "level", label: '${currentValue} %', unit: "%", backgroundColor: "#ffffff"
         }
 
         main(["switch"])
@@ -56,16 +56,14 @@ def parse(String description) {
                    data.contains("sa c4.dmx.cc 05 01")) {
             log.debug "parse switch off"
             evt = createEvent(name: "switch", value: "off")
-        } else if (data.contains("sa c4.dmx.bp") ||
-                   data.contains("sa c4.dmx.sc") ||
-                   data.contains("sa c4.dmx.cc") ||
-                   data.contains("sa c4.dmx.hc") ||
-                   data.contains("sa c4.dmx.he")) {
+        } else if (data.contains("sa c4.dmx.bp") || data.contains("sa c4.dmx.sc") ||
+                   data.contains("sa c4.dmx.hc") || data.contains("sa c4.dmx.he") ||
+                   data.contains("sa c4.dmx.cc")) {
             // bp - button down
             // sc - button up
-            // cc - button click
             // hc - button hold
             // he - button hold end
+            // cc - button click
             // params:
             // 01 top button
             // 05 bottom button
@@ -74,19 +72,29 @@ def parse(String description) {
         } else if (data.contains("sa c4.dmx.ls")) {
             def level = Integer.parseInt(data.tokenize(" ")[5], 16)
             log.debug "parse level ${level}"
-            evt = createEvent(name: "level", value: level)
+            if (level >= 0 && level <= 100) {
+                evt = createEvent(name: "level", value: level)
+            } else {
+                log.error "parse level ${level} not within [0..100]"
+            }
         } else if (data.contains("c4:control4_light:C4-APD120")) {
             // firmware?
         } else {
-            if (data.length() > 0 && data.charAt(data.length() - 1) == '\n') data = data.take(data.length() - 1)
-            log.warn "parse(data = '${data}' ${msg}) not handled"
+            if (data.length() > 0 && data.charAt(data.length() - 1) == '\n') {
+                data = data.take(data.length() - 1)
+            }
+            log.warn "parse(data = '${data}' msg = '${msg}') not handled"
         }
     } else if (description?.startsWith("read attr -")) {
         def descMap = parseDescriptionAsMap(description)
         if (descMap.cluster == "0008" && descMap.attrId == "0000") {
             def level = Math.round(Integer.parseInt(descMap.value, 16) * 100 / 255)
             log.debug "parse attr level ${level}"
-            evt = createEvent(name: "level", value: level)
+            if (level >= 0 && level <= 100) {
+                evt = createEvent(name: "level", value: level)
+            } else {
+                log.error "parse attr level ${level} not within [0..100]"
+            }
         } else {
             log.warn "parse(read attr descMap = '${descMap}') not handled"
         }
