@@ -14,21 +14,13 @@
  *
  */
 metadata {
-    definition (name: "Control4 Dimmer", namespace: "etrnls", author: "Shuai Wang") {
+    definition(name: "Control4 Dimmer", namespace: "etrnls", author: "Shuai Wang") {
         capability "Actuator"
         capability "Sensor"
         capability "Switch"
         capability "Switch Level"
         capability "Refresh"
         capability "Polling"
-    }
-
-    simulator {
-        status "on": "on/off: 1"
-        status "off": "on/off: 0"
-
-        reply "zcl on-off on": "on/off: 1"
-        reply "zcl on-off off": "on/off: 0"
     }
 
     tiles {
