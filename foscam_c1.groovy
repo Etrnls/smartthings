@@ -32,7 +32,7 @@ metadata {
 
         carouselTile("cameraDetails", "device.image", width: 3, height: 2) { }
 
-        standardTile("take", "device.image", width: 1, height: 1) {
+        standardTile("take", "device.image") {
             state "take", label: "Take", action: "Image Capture.take", icon: "st.camera.dropcam", backgroundColor: "#FFFFFF", nextState: "taking"
             state "taking", label: "Taking", action: "", icon: "st.camera.dropcam", backgroundColor: "#53a7c0"
             state "image", label: "Take", action: "Image Capture.take", icon: "st.camera.dropcam", backgroundColor: "#FFFFFF", nextState: "taking"

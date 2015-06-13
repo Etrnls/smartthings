@@ -31,7 +31,7 @@ metadata {
         standardTile("refresh", "device.switch", decoration: "flat") {
             state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
-        controlTile("levelControl", "device.level", "slider", height: 1, width: 3, range: "(0..100)") {
+        controlTile("levelControl", "device.level", "slider", width: 3, range: "(0..100)") {
             state "level", action: "switch level.setLevel"
         }
         valueTile("levelValue", "device.level", decoration: "flat") {
