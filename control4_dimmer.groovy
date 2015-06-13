@@ -86,7 +86,7 @@ def parse(String description) {
             log.warn "parse(data = '${data}' msg = '${msg}') not handled"
         }
     } else if (description?.startsWith("read attr -")) {
-        def descMap = parseDescriptionAsMap(description)
+        def descMap = stringToMap(description - "read attr - ")
         if (descMap.cluster == "0008" && descMap.attrId == "0000") {
             def level = Math.round(Integer.parseInt(descMap.value, 16) * 100 / 255)
             log.debug "parse attr level ${level}"
@@ -151,11 +151,4 @@ def refresh() {
 def poll() {
     log.trace "poll()"
     refresh()
-}
-
-def parseDescriptionAsMap(description) {
-    (description - "read attr - ").split(",").inject([:]) { map, param ->
-        def nameAndValue = param.split(":")
-        map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
-    }
 }
