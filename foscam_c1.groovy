@@ -19,9 +19,9 @@ metadata {
         capability "Sensor"
         capability "Image Capture"
         capability "Refresh"
- 
+
         attribute "motion", "string"
- 
+
         command "motionOn"
         command "motionOff"
     }
@@ -88,11 +88,11 @@ def putImageInS3(bucket, key) {
 
 def parseMotionDetectConfig(config) {
     log.trace "parseMotionDetectConfig(${config})"
-    if (config?.result != 0 || config.isEnable.isEmpty() || config.linkage.isEmpty() ||
+    if (config.result != 0 || config.isEnable.isEmpty() || config.linkage.isEmpty() ||
         config.sensitivity.isEmpty() || config.triggerInterval.isEmpty() ||
         config.isMovAlarmEnable.isEmpty() || config.isPirAlarmEnable.isEmpty()) {
         return null
-    } else if (config.isEnable == 1 && config.linkage == 0 &&
+    } else if (config.isEnable == 1 && config.linkage == 2 &&
                config.sensitivity == 2 && config.triggerInterval == 0 &&
                config.isMovAlarmEnable == 1 && config.isPirAlarmEnable == 1 &&
                config.schedule0 == 281474976710655 &&
@@ -129,7 +129,7 @@ def refresh() {
 
 def motionOn() {
     log.trace "motionOn()"
-	sendEvent(name: "motion", value: "on")
+    sendEvent(name: "motion", value: "on")
     def params = [
         isEnable: 1,
         linkage: 0,
