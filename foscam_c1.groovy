@@ -107,8 +107,10 @@ def parseMotionDetectConfig(config) {
                config.area4 == 1023 && config.area5 == 1023 &&
                config.area6 == 1023 && config.area7 == 1023 &&
                config.area8 == 1023 && config.area9 == 1023) {
+        log.debug "parseMotionDetectConfig motion on"
         return createEvent(name: "motion", value: "on")
     } else {
+        log.debug "parseMotionDetectConfig motion off"
         return createEvent(name: "motion", value: "off")
     }
 }
