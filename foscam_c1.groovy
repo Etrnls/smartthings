@@ -132,7 +132,7 @@ def motionOn() {
     sendEvent(name: "motion", value: "on")
     def params = [
         isEnable: 1,
-        linkage: 0,
+        linkage: 2,
         sensitivity: 2,
         triggerInterval: 0,
         schedule0: 281474976710655,
