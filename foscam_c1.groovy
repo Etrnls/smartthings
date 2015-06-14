@@ -32,9 +32,12 @@ metadata {
     }
 
     tiles {
-        standardTile("image", "device.motion") {
-            state "on", action: "motionOff", icon: "st.camera.dropcam-centered", backgroundColor: "#53a7c0"
-            state "off", action: "motionOn", icon: "st.camera.dropcam-centered", backgroundColor: "#ffffff"
+        standardTile("image", "device.image") {
+            state "default", icon: "st.camera.dropcam-centered", backgroundColor: "#ffffff"
+        }
+        standardTile("motion", "device.motion") {
+            state "on", label: '${name}', action: "motionOff", icon: "st.Entertainment.entertainment9", backgroundColor: "#53a7c0"
+            state "off", label: '${name}', action: "motionOn", icon: "st.Entertainment.entertainment9", backgroundColor: "#ffffff"
         }
         carouselTile("cameraDetails", "device.image", width: 3, height: 2) { }
         standardTile("take", "device.image") {
@@ -47,7 +50,7 @@ metadata {
         }
 
         main "image"
-        details(["cameraDetails", "image", "take", "refresh"])
+        details(["cameraDetails", "motion", "take", "refresh"])
     }
 }
 
