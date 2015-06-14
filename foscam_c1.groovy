@@ -57,9 +57,13 @@ def parse(String description) {
         putImageInS3(descMap.bucket, descMap.key)
     } else if (descMap.headers && descMap.body) {
         def data = new XmlSlurper().parseText(new String(descMap.body.decodeBase64()))
-        def evt = parseMotionDetectConfig(data)
-        if (evt) return evt
-        log.warn "parse(data = '${data}') not handled"
+        if (data.children().size() == 1 && data.result == 0) {
+            // set cmd success
+        } else {
+            def evt = parseMotionDetectConfig(data)
+            if (evt) return evt
+            log.warn "parse(data = '${data}') not handled"
+        }
     } else {
         log.warn "parse(descMap = '${descMap}') not handled"
     }
