@@ -58,7 +58,7 @@ def parse(String description) {
     } else if (descMap.headers && descMap.body) {
         def data = new XmlSlurper().parseText(new String(descMap.body.decodeBase64()))
         if (data.children().size() == 1 && data.result == 0) {
-            // set cmd success
+            log.debug "parse cmd success"
         } else {
             def evt = parseMotionDetectConfig(data)
             if (evt) return evt
