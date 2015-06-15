@@ -32,10 +32,11 @@ metadata {
     }
 
     tiles {
-        standardTile("image", "device.image") {
-            state "default", icon: "st.camera.dropcam-centered", backgroundColor: "#ffffff"
+        standardTile("motionIndicator", "device.motion") {
+            state "on", icon: "st.camera.dropcam-centered", backgroundColor: "#53a7c0"
+            state "off", icon: "st.camera.dropcam-centered", backgroundColor: "#ffffff"
         }
-        standardTile("motion", "device.motion") {
+        standardTile("motionControl", "device.motion") {
             state "on", label: '${name}', action: "motionOff", icon: "st.Entertainment.entertainment9", backgroundColor: "#53a7c0"
             state "off", label: '${name}', action: "motionOn", icon: "st.Entertainment.entertainment9", backgroundColor: "#ffffff"
         }
@@ -49,8 +50,8 @@ metadata {
             state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
 
-        main "image"
-        details(["cameraDetails", "motion", "take", "refresh"])
+        main "motionIndicator"
+        details(["cameraDetails", "motionControl", "take", "refresh"])
     }
 }
 
