@@ -14,50 +14,50 @@
  *
  */
 metadata {
-	definition(name: "Control4 Thermostat", namespace: "etrnls", author: "Shuai Wang") {
+    definition(name: "Control4 Thermostat", namespace: "etrnls", author: "Shuai Wang") {
         capability "Actuator"
         capability "Sensor"
-		capability "Thermostat"
+        capability "Thermostat"
         capability "Refresh"
         capability "Polling"
-	}
+    }
 
-	tiles {
+    tiles {
         valueTile("temperature", "device.temperature", width: 2, height: 2) {
-			state("temperature", label: '${currentValue}°',
+            state("temperature", label: '${currentValue}°',
                 backgroundColors: [
-					[value: 31, color: "#153591"],
-					[value: 44, color: "#1e9cbb"],
-					[value: 59, color: "#90d2a7"],
-					[value: 74, color: "#44b621"],
-					[value: 84, color: "#f1d801"],
-					[value: 95, color: "#d04e00"],
-					[value: 96, color: "#bc2323"]
-				]
-			)
-		}
+                    [value: 31, color: "#153591"],
+                    [value: 44, color: "#1e9cbb"],
+                    [value: 59, color: "#90d2a7"],
+                    [value: 74, color: "#44b621"],
+                    [value: 84, color: "#f1d801"],
+                    [value: 95, color: "#d04e00"],
+                    [value: 96, color: "#bc2323"]
+                ]
+            )
+        }
         standardTile("refresh", "device.temperature", decoration: "flat") {
-			state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
-		}
+            state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
+        }
         standardTile("mode", "device.thermostatMode", decoration: "flat") {
-			state "off", label: '${name}', action: "thermostat.setThermostatMode"
-			state "heat", label: '${name}', action: "thermostat.setThermostatMode"
-			state "cool", label: '${name}', action: "thermostat.setThermostatMode"
-			state "auto heat", label: '${name}', action: "thermostat.setThermostatMode"
-			state "auto cool", label: '${name}', action: "thermostat.setThermostatMode"
-		}
+            state "off", label: '${name}', action: "thermostat.setThermostatMode"
+            state "heat", label: '${name}', action: "thermostat.setThermostatMode"
+            state "cool", label: '${name}', action: "thermostat.setThermostatMode"
+            state "auto heat", label: '${name}', action: "thermostat.setThermostatMode"
+            state "auto cool", label: '${name}', action: "thermostat.setThermostatMode"
+        }
         valueTile("operatingState", "device.thermostatOperatingState", decoration: "flat") {
             state "default", label: '${currentValue}'
-		}
+        }
         valueTile("heatingSetpoint", "device.heatingSetpoint", decoration: "flat") {
             state "heat", label: '${currentValue}° heat'
-		}
-		valueTile("coolingSetpoint", "device.coolingSetpoint", decoration: "flat") {
-			state "cool", label: '${currentValue}° cool'
-		}
+        }
+        valueTile("coolingSetpoint", "device.coolingSetpoint", decoration: "flat") {
+            state "cool", label: '${currentValue}° cool'
+        }
         main "temperature"
         details(["temperature", "refresh", "mode", "operatingState", "heatingSetpoint", "coolingSetpoint"])
-	}
+    }
 }
 
 def parse(String description) {
@@ -104,71 +104,71 @@ def parse(String description) {
     } else {
         log.warn "parse(description = '${description}') not handled"
     }
-	// TODO: handle 'thermostatMode' attribute
-	// TODO: handle 'thermostatFanMode' attribute
-	// TODO: handle 'thermostatOperatingState' attribute
+    // TODO: handle 'thermostatMode' attribute
+    // TODO: handle 'thermostatFanMode' attribute
+    // TODO: handle 'thermostatOperatingState' attribute
 
 }
 
 // handle commands
 def setHeatingSetpoint() {
-	log.debug "Executing 'setHeatingSetpoint'"
-	// TODO: handle 'setHeatingSetpoint' command
+    log.debug "Executing 'setHeatingSetpoint'"
+    // TODO: handle 'setHeatingSetpoint' command
 }
 
 def setCoolingSetpoint() {
-	log.debug "Executing 'setCoolingSetpoint'"
-	// TODO: handle 'setCoolingSetpoint' command
+    log.debug "Executing 'setCoolingSetpoint'"
+    // TODO: handle 'setCoolingSetpoint' command
 }
 
 def off() {
-	log.debug "Executing 'off'"
-	// TODO: handle 'off' command
+    log.debug "Executing 'off'"
+    // TODO: handle 'off' command
 }
 
 def heat() {
-	log.debug "Executing 'heat'"
-	// TODO: handle 'heat' command
+    log.debug "Executing 'heat'"
+    // TODO: handle 'heat' command
 }
 
 def emergencyHeat() {
-	log.debug "Executing 'emergencyHeat'"
-	// TODO: handle 'emergencyHeat' command
+    log.debug "Executing 'emergencyHeat'"
+    // TODO: handle 'emergencyHeat' command
 }
 
 def cool() {
-	log.debug "Executing 'cool'"
-	// TODO: handle 'cool' command
+    log.debug "Executing 'cool'"
+    // TODO: handle 'cool' command
 }
 
 def setThermostatMode() {
-	log.debug "Executing 'setThermostatMode'"
-	// TODO: handle 'setThermostatMode' command
+    log.debug "Executing 'setThermostatMode'"
+    // TODO: handle 'setThermostatMode' command
 }
 
 def fanOn() {
-	log.debug "Executing 'fanOn'"
-	// TODO: handle 'fanOn' command
+    log.debug "Executing 'fanOn'"
+    // TODO: handle 'fanOn' command
 }
 
 def fanAuto() {
-	log.debug "Executing 'fanAuto'"
-	// TODO: handle 'fanAuto' command
+    log.debug "Executing 'fanAuto'"
+    // TODO: handle 'fanAuto' command
 }
 
 def fanCirculate() {
-	log.debug "Executing 'fanCirculate'"
-	// TODO: handle 'fanCirculate' command
+    log.debug "Executing 'fanCirculate'"
+    // TODO: handle 'fanCirculate' command
 }
 
 def setThermostatFanMode() {
-	log.debug "Executing 'setThermostatFanMode'"
-	// TODO: handle 'setThermostatFanMode' command
+    log.debug "Executing 'setThermostatFanMode'"
+    // TODO: handle 'setThermostatFanMode' command
 }
 
 def auto() {
-	log.debug "Executing 'auto'"
-	// TODO: handle 'auto' command
+    log.debug "Executing 'auto'"
+    // TODO: handle 'auto' command
 }
 
 def refresh() {
@@ -178,7 +178,7 @@ def refresh() {
 }
 
 private parseTemperature(temperature) {
-	log.trace "parseTemperature(${temperature})"
+    log.trace "parseTemperature(${temperature})"
     def celsius = (Integer.parseInt(temperature, 16) - 0xAAA) / 0xA
     return getTemperatureScale() == "C" ? celsius : celsiusToFahrenheit(celsius)
 }
