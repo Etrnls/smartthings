@@ -38,7 +38,7 @@ metadata {
             state "level", label: '${currentValue} %', unit: "%"
         }
 
-        main  "switch"
+        main "switch"
         details(["switch", "refresh", "levelControl", "levelValue"])
     }
 }
