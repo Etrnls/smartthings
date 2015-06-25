@@ -106,8 +106,6 @@ def parse(String description) {
     }
     // TODO: handle 'thermostatMode' attribute
     // TODO: handle 'thermostatFanMode' attribute
-    // TODO: handle 'thermostatOperatingState' attribute
-
 }
 
 // handle commands

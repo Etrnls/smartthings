@@ -35,10 +35,10 @@ metadata {
             state "level", action: "switch level.setLevel"
         }
         valueTile("levelValue", "device.level", decoration: "flat") {
-            state "level", label: '${currentValue} %', unit: "%", backgroundColor: "#ffffff"
+            state "level", label: '${currentValue} %', unit: "%"
         }
 
-        main(["switch"])
+        main  "switch"
         details(["switch", "refresh", "levelControl", "levelValue"])
     }
 }
