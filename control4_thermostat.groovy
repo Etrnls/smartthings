@@ -104,75 +104,10 @@ def parse(String description) {
     } else {
         log.warn "parse(description = '${description}') not handled"
     }
-    // TODO: handle 'thermostatMode' attribute
-    // TODO: handle 'thermostatFanMode' attribute
-}
-
-// handle commands
-def setHeatingSetpoint() {
-    log.debug "Executing 'setHeatingSetpoint'"
-    // TODO: handle 'setHeatingSetpoint' command
-}
-
-def setCoolingSetpoint() {
-    log.debug "Executing 'setCoolingSetpoint'"
-    // TODO: handle 'setCoolingSetpoint' command
-}
-
-def off() {
-    log.debug "Executing 'off'"
-    // TODO: handle 'off' command
-}
-
-def heat() {
-    log.debug "Executing 'heat'"
-    // TODO: handle 'heat' command
-}
-
-def emergencyHeat() {
-    log.debug "Executing 'emergencyHeat'"
-    // TODO: handle 'emergencyHeat' command
-}
-
-def cool() {
-    log.debug "Executing 'cool'"
-    // TODO: handle 'cool' command
-}
-
-def setThermostatMode() {
-    log.debug "Executing 'setThermostatMode'"
-    // TODO: handle 'setThermostatMode' command
-}
-
-def fanOn() {
-    log.debug "Executing 'fanOn'"
-    // TODO: handle 'fanOn' command
-}
-
-def fanAuto() {
-    log.debug "Executing 'fanAuto'"
-    // TODO: handle 'fanAuto' command
-}
-
-def fanCirculate() {
-    log.debug "Executing 'fanCirculate'"
-    // TODO: handle 'fanCirculate' command
-}
-
-def setThermostatFanMode() {
-    log.debug "Executing 'setThermostatFanMode'"
-    // TODO: handle 'setThermostatFanMode' command
-}
-
-def auto() {
-    log.debug "Executing 'auto'"
-    // TODO: handle 'auto' command
 }
 
 def refresh() {
     log.trace "refresh()"
-    def scale = getTemperatureScale()
-    log.debug "getTemperatureScale = ${scale}"
 }
 
 private parseTemperature(temperature) {
