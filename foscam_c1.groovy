@@ -1,5 +1,5 @@
 /**
- *  Foscam
+ *  Foscam C1
  *
  *  Copyright 2015 Shuai Wang
  *
