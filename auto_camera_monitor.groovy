@@ -43,8 +43,7 @@ def initialize() {
     subscribe(presences, "presence", presence)
 }
 
-def presence(evt)
-{
+def presence(evt) {
     log.trace "presence(${evt.value})"
     if (evt.value == "present") {
         log.debug "Turning motion monitoring off"
