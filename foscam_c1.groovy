@@ -96,7 +96,7 @@ def parseMotionDetectConfig(config) {
         config.sensitivity.isEmpty() || config.triggerInterval.isEmpty() ||
         config.isMovAlarmEnable.isEmpty() || config.isPirAlarmEnable.isEmpty()) {
         return null
-    } else if (config.isEnable == 1 && config.linkage == 2 &&
+    } else if (config.isEnable == 1 && config.linkage == 10 &&
                config.sensitivity == 2 && config.triggerInterval == 0 &&
                config.isMovAlarmEnable == 1 && config.isPirAlarmEnable == 1 &&
                config.schedule0 == 281474976710655 &&
@@ -136,7 +136,7 @@ def motionOn() {
     sendEvent(name: "motion", value: "on")
     def params = [
         isEnable: 1,
-        linkage: 2,
+        linkage: 10,
         sensitivity: 2,
         triggerInterval: 0,
         schedule0: 281474976710655,
