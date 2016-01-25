@@ -21,6 +21,8 @@ metadata {
         capability "Switch Level"
         capability "Refresh"
         capability "Polling"
+
+        fingerprint endpointId: "01", profileId: "0104", inClusters: "0003"
     }
 
     tiles {
@@ -44,16 +46,19 @@ metadata {
 }
 
 def parse(String description) {
-    def evt = null
+    def evt = zigbee.getEvent(description)
+    if (evt) {
+        log.debug "parse event ${evt}"
+        return evt
+    }
+
     if (description?.startsWith("catchall:")) {
         def msg = zigbee.parse(description)
         def data = msg.clusterId == 0x0001 ? new String(msg.data as byte[]) : ""
-        if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 1]) ||
-            data.contains("sa c4.dmx.cc 01 01")) {
+        if (data.contains("sa c4.dmx.cc 01 01")) {
             log.debug "parse switch on"
             evt = createEvent(name: "switch", value: "on")
-        } else if ((msg.clusterId == 0x0006 && msg.data == [0, 0, 0, 16, 0]) ||
-                   data.contains("sa c4.dmx.cc 05 01")) {
+        } else if (data.contains("sa c4.dmx.cc 05 01")) {
             log.debug "parse switch off"
             evt = createEvent(name: "switch", value: "off")
         } else if (data.contains("sa c4.dmx.bp") || data.contains("sa c4.dmx.sc") ||
@@ -70,33 +75,21 @@ def parse(String description) {
             // bp 01 - top button down
             // cc 05 02 - bottom button click twice
         } else if (data.contains("sa c4.dmx.ls")) {
-            def level = Integer.parseInt(data.tokenize(" ")[5], 16)
+            def level = zigbee.convertHexToInt(data.tokenize(" ")[5])
             log.debug "parse level ${level}"
             if (level >= 0 && level <= 100) {
                 evt = createEvent(name: "level", value: level)
             } else {
                 log.error "parse level ${level} not within [0..100]"
             }
-        } else if (data.contains("c4:control4_light:C4-APD120")) {
+        } else if (data.contains("c4:control4_light:C4-APD120") ||
+                   data.contains("c4:control4_light:C4-SW120277")) {
             // firmware?
         } else {
             if (data.length() > 0 && data.charAt(data.length() - 1) == '\n') {
                 data = data.take(data.length() - 1)
             }
             log.warn "parse(data = '${data}' msg = '${msg}') not handled"
-        }
-    } else if (description?.startsWith("read attr -")) {
-        def descMap = stringToMap(description - "read attr - ")
-        if (descMap.cluster == "0008" && descMap.attrId == "0000") {
-            def level = Math.round(Integer.parseInt(descMap.value, 16) * 100 / 255)
-            log.debug "parse attr level ${level}"
-            if (level >= 0 && level <= 100) {
-                evt = createEvent(name: "level", value: level)
-            } else {
-                log.error "parse attr level ${level} not within [0..100]"
-            }
-        } else {
-            log.warn "parse(read attr descMap = '${descMap}') not handled"
         }
     } else {
         log.warn "parse(description = '${description}') not handled"
@@ -113,14 +106,12 @@ def parse(String description) {
 
 def on() {
     log.trace "on()"
-    sendEvent(name: "switch", value: "on")
-    "st cmd 0x${device.deviceNetworkId} 1 6 1 {}"
+    zigbee.on()
 }
 
 def off() {
     log.trace "off()"
-    sendEvent(name: "switch", value: "off")
-    "st cmd 0x${device.deviceNetworkId} 1 6 0 {}"
+    zigbee.off()
 }
 
 def setLevel(value) {
@@ -133,19 +124,20 @@ def setLevel(value) {
         cmds << on()
     }
 
-    sendEvent(name: "level", value: value)
-    def level = String.format("%02x", Math.round(value * 255 / 100));
-    cmds << "st cmd 0x${device.deviceNetworkId} 1 8 4 {${level} 0000}"
+    def level = Math.round(value * 255 / 100);
+    cmds << zigbee.command(8, 4, zigbee.convertToHexString(level), "0000")
 
     cmds
 }
 
+def configure() {
+    log.trace "configure()"
+    zigbee.onOffConfig() + zigbee.levelConfig() + zigbee.onOffRefresh() + zigbee.levelRefresh()
+}
+
 def refresh() {
     log.trace "refresh()"
-    [
-        "st rattr 0x${device.deviceNetworkId} 1 6 0", "delay 200",
-        "st rattr 0x${device.deviceNetworkId} 1 8 0", "delay 200",
-    ]
+    zigbee.onOffRefresh() + zigbee.levelRefresh() + zigbee.onOffConfig() + zigbee.levelConfig()
 }
 
 def poll() {
