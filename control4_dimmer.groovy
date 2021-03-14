@@ -1,18 +1,3 @@
-/**
- *  Control4 Dimmer
- *
- *  Copyright 2015 Shuai Wang
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License. You may obtain a copy of the License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
- *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
- *  for the specific language governing permissions and limitations under the License.
- *
- */
 metadata {
     definition(name: "Control4 Dimmer", namespace: "etrnls", author: "Shuai Wang") {
         capability "Actuator"
@@ -23,25 +8,6 @@ metadata {
         capability "Polling"
 
         fingerprint endpointId: "01", profileId: "0104", inClusters: "0003"
-    }
-
-    tiles {
-        standardTile("switch", "device.switch", width: 2, height: 2) {
-            state "on", label: '${name}', action: "switch.off", icon: "st.switches.light.on", backgroundColor: "#79b821"
-            state "off", label: '${name}', action: "switch.on", icon: "st.switches.light.off", backgroundColor: "#ffffff"
-        }
-        standardTile("refresh", "device.switch", decoration: "flat") {
-            state "default", action: "refresh.refresh", icon: "st.secondary.refresh"
-        }
-        controlTile("levelControl", "device.level", "slider", width: 3, range: "(0..100)") {
-            state "level", action: "switch level.setLevel"
-        }
-        valueTile("levelValue", "device.level", decoration: "flat") {
-            state "level", label: '${currentValue} %', unit: "%"
-        }
-
-        main "switch"
-        details(["switch", "refresh", "levelControl", "levelValue"])
     }
 }
 
@@ -106,16 +72,24 @@ def parse(String description) {
 
 def on() {
     log.trace "on()"
-    zigbee.on()
+    device.endpointId = 1
+    // zigbee.on() = [st cmd 0x${device.deviceNetworkId} 0x01 0x0006 0x01 {}, delay 2000]
+    // 0x01: endpointId
+    // 0x0006: zigbee On/Off cluster
+    // 0x01: put the light in the on state
+    configure() + zigbee.on()
 }
 
 def off() {
     log.trace "off()"
-    zigbee.off()
+    device.endpointId = 1
+    // zigbee.off() = [st cmd 0x${device.deviceNetworkId} 0x01 0x0006 0x00 {}, delay 2000]
+    configure() + zigbee.off()
 }
 
 def setLevel(value) {
     log.trace "setLevel(${value})"
+    device.endpointId = 1
     def cmds = []
 
     if (value == 0) {
@@ -125,6 +99,8 @@ def setLevel(value) {
     }
 
     def level = Math.round(value * 255 / 100);
+    // [st cmd 0x${device.deviceNetworkId} 0x01 0x0008 0x04 {960000}, delay 2000]
+    // 0x0008: zigbee Level Control cluster
     cmds << zigbee.command(8, 4, zigbee.convertToHexString(level), "0000")
 
     cmds
@@ -132,12 +108,25 @@ def setLevel(value) {
 
 def configure() {
     log.trace "configure()"
+    device.endpointId = 1
+    // onOffConfig() = [
+    //     zdo bind 0x${device.deviceNetworkId} 0x01 0x01 0x0006 {${device.zigbeeId}} {},
+    //     delay 2000,
+    //     st cr 0x${device.deviceNetworkId} 0x01 0x0006 0x0000 0x10 0x0000 0x0258 {},
+    //     delay 2000]
+	// levelConfig() = [
+    //     zdo bind 0x${device.deviceNetworkId} 0x01 0x01 0x0008 {${device.zigbeeId}} {},
+    //     delay 2000,
+    //     st cr 0x${device.deviceNetworkId} 0x01 0x0008 0x0000 0x20 0x0001 0x0E10 {01},
+    //     delay 2000]
+    // onOffRefresh() = [st rattr 0x${device.deviceNetworkId} 0x01 0x0006 0x0000, delay 2000]
+    // levelRefresh() = [st rattr 0x${device.deviceNetworkId} 0x01 0x0008 0x0000, delay 2000]
     zigbee.onOffConfig() + zigbee.levelConfig() + zigbee.onOffRefresh() + zigbee.levelRefresh()
 }
 
 def refresh() {
     log.trace "refresh()"
-    zigbee.onOffRefresh() + zigbee.levelRefresh() + zigbee.onOffConfig() + zigbee.levelConfig()
+    configure()
 }
 
 def poll() {
