@@ -104,8 +104,9 @@ def setLevel(value) {
     def level = Math.round(value * 255 / 100);
     // [st cmd 0x${device.deviceNetworkId} 0x01 0x0008 0x04 {<00~FF>0000}, delay 2000]
     // 0x0008: zigbee Level Control cluster
+    // 0x04: set level
     // "0000" is transition time
-    cmds << zigbee.command(8, 4, zigbee.convertToHexString(level), "0000")
+    cmds << zigbee.command(0x0008, 0x04, zigbee.convertToHexString(level), "0000")
 
     cmds
 }
