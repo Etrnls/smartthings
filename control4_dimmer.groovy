@@ -84,6 +84,9 @@ def off() {
     log.trace "off()"
     device.endpointId = 1
     // zigbee.off() = [st cmd 0x${device.deviceNetworkId} 0x01 0x0006 0x00 {}, delay 2000]
+    // 0x01: endpointId
+    // 0x0006: zigbee On/Off cluster
+    // 0x00: put the light in the off state
     configure() + zigbee.off()
 }
 
@@ -99,8 +102,9 @@ def setLevel(value) {
     }
 
     def level = Math.round(value * 255 / 100);
-    // [st cmd 0x${device.deviceNetworkId} 0x01 0x0008 0x04 {960000}, delay 2000]
+    // [st cmd 0x${device.deviceNetworkId} 0x01 0x0008 0x04 {<00~FF>0000}, delay 2000]
     // 0x0008: zigbee Level Control cluster
+    // "0000" is transition time
     cmds << zigbee.command(8, 4, zigbee.convertToHexString(level), "0000")
 
     cmds
@@ -109,18 +113,27 @@ def setLevel(value) {
 def configure() {
     log.trace "configure()"
     device.endpointId = 1
+    // zdo bind: zdo bind 0x${device.deviceNetworkId} <source endpoint> <dest endpoint> <cluster> <zigbee id>
     // onOffConfig() = [
     //     zdo bind 0x${device.deviceNetworkId} 0x01 0x01 0x0006 {${device.zigbeeId}} {},
     //     delay 2000,
     //     st cr 0x${device.deviceNetworkId} 0x01 0x0006 0x0000 0x10 0x0000 0x0258 {},
     //     delay 2000]
+    // def onOffConfig(minReportTime=0, maxReportTime=600) {
+    //     configureReporting(ONOFF_CLUSTER, 0x0000, DataType.BOOLEAN, minReportTime, maxReportTime, null)
+    // }
 	// levelConfig() = [
     //     zdo bind 0x${device.deviceNetworkId} 0x01 0x01 0x0008 {${device.zigbeeId}} {},
     //     delay 2000,
     //     st cr 0x${device.deviceNetworkId} 0x01 0x0008 0x0000 0x20 0x0001 0x0E10 {01},
     //     delay 2000]
+    // def levelConfig(minReportTime=1, maxReportTime=3600, reportableChange=0x01) {
+    //     configureReporting(LEVEL_CONTROL_CLUSTER, 0x0000, DataType.UINT8, minReportTime, maxReportTime, reportableChange)
+    // }
     // onOffRefresh() = [st rattr 0x${device.deviceNetworkId} 0x01 0x0006 0x0000, delay 2000]
     // levelRefresh() = [st rattr 0x${device.deviceNetworkId} 0x01 0x0008 0x0000, delay 2000]
+    // zigbee.configureReporting(Integer Cluster, Integer attributeId, Integer dataType,
+    //                           Integer minReportTime, Integer MaxReportTime, [Integer reportableChange], Map additionalParams=[:])
     zigbee.onOffConfig() + zigbee.levelConfig() + zigbee.onOffRefresh() + zigbee.levelRefresh()
 }
 
