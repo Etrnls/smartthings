@@ -5,7 +5,7 @@ metadata {
         capability "Switch"
         capability "Switch Level"
         capability "Refresh"
-        capability "Polling"
+        capability "Health Check"
 
         fingerprint endpointId: "01", profileId: "0104", inClusters: "0003"
     }
@@ -77,7 +77,7 @@ def on() {
     // 0x01: endpointId
     // 0x0006: zigbee On/Off cluster
     // 0x01: put the light in the on state
-    configure() + zigbee.on()
+    zigbee.on()
 }
 
 def off() {
@@ -87,7 +87,7 @@ def off() {
     // 0x01: endpointId
     // 0x0006: zigbee On/Off cluster
     // 0x00: put the light in the off state
-    configure() + zigbee.off()
+    zigbee.off()
 }
 
 def setLevel(value) {
@@ -143,7 +143,7 @@ def refresh() {
     configure()
 }
 
-def poll() {
-    log.trace "poll()"
+def ping() {
+    log.trace "ping()"
     refresh()
 }
