@@ -123,7 +123,7 @@ def configure() {
     // def onOffConfig(minReportTime=0, maxReportTime=600) {
     //     configureReporting(ONOFF_CLUSTER, 0x0000, DataType.BOOLEAN, minReportTime, maxReportTime, null)
     // }
-	// levelConfig() = [
+    // levelConfig() = [
     //     zdo bind 0x${device.deviceNetworkId} 0x01 0x01 0x0008 {${device.zigbeeId}} {},
     //     delay 2000,
     //     st cr 0x${device.deviceNetworkId} 0x01 0x0008 0x0000 0x20 0x0001 0x0E10 {01},
